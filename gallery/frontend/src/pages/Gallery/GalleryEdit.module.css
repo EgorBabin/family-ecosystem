@@ -1,0 +1,544 @@
+.main {
+  box-sizing: border-box;
+  min-height: 70dvh;
+  width: min(100%, 1200px);
+  padding: clamp(12px, 2vw, 24px);
+  margin: 0 auto 8%;
+  display: block;
+  color: var(--color-text-primary);
+}
+
+.mainRoot {
+  max-width: 1200px;
+}
+
+.mainFolder {
+  max-width: 920px;
+}
+
+.managerSection,
+.uploadSection {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    var(--color-panel-top-glow),
+    var(--color-panel-bottom-glow)
+  );
+  padding: clamp(12px, 2vw, 16px);
+  box-shadow: 0 8px 28px var(--color-panel-shadow);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sectionHead h1 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.createForm {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.createForm h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+.createForm label,
+.table label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.86rem;
+  color: var(--color-text-secondary);
+}
+
+.main input[type='text'],
+.main input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-users-bg-field);
+  color: var(--color-text-primary);
+  padding: 8px 10px;
+}
+
+.main button {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--color-text-primary);
+  background: linear-gradient(180deg, var(--accent-1), var(--accent-1-strong));
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.main button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 8px 0;
+  color: var(--accent-2);
+  font-size: 0.92rem;
+}
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rootPendingSection {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 10px;
+}
+
+.rootPendingHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rootPendingHead h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.rootPendingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.rootPendingCard {
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-overlay-soft);
+}
+
+.rootPendingImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  object-fit: cover;
+  opacity: 0.52;
+}
+
+.rootPendingMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.rootPendingMeta p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+}
+
+.rootPendingMeta strong {
+  color: var(--color-text-primary);
+}
+
+.rootPendingOpenButton {
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.table th,
+.table td {
+  border-top: 1px solid var(--color-border-strong);
+  padding: 8px;
+  vertical-align: top;
+  font-size: 0.88rem;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.pathFields {
+  display: grid;
+  grid-template-columns: 64px 16px minmax(110px, 1fr);
+  align-items: center;
+  gap: 4px;
+}
+
+.pathFields span {
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.sortField {
+  display: grid;
+  grid-template-columns: 32px minmax(60px, 1fr) 32px;
+  align-items: center;
+  gap: 4px;
+}
+
+.inlinePreview {
+  display: block;
+  margin-top: 8px;
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.uploadSection h2 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+.helpText {
+  margin: 6px 0;
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+}
+
+.container {
+  width: 100%;
+  margin-top: 10px;
+  height: min(52dvh, 420px);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: linear-gradient(
+    180deg,
+    var(--color-panel-top-glow),
+    var(--color-background-overlay-soft)
+  );
+}
+
+.img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.item {
+  margin-top: 10px;
+  min-height: 180px;
+  border: 2px dashed var(--color-upload-dropzone-border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+.fileLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+  color: var(--color-text-primary);
+  user-select: none;
+}
+
+.reorderSection {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 10px;
+}
+
+.reorderHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reorderHead h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.reorderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reorderHint {
+  margin: 0;
+  color: var(--accent-2);
+  font-size: 0.9rem;
+}
+
+.reorderStatus {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  background: var(--color-background-overlay-soft);
+  word-break: break-all;
+}
+
+.reorderStatus span {
+  opacity: 0.8;
+}
+
+.reorderEmpty {
+  min-height: 110px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  padding: 12px;
+  text-align: center;
+}
+
+.reorderGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 8px;
+}
+
+.reorderCard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-overlay-soft);
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.reorderCardDragging {
+  opacity: 0.78;
+  box-shadow: 0 0 0 2px var(--accent-1);
+}
+
+.reorderCard:active {
+  cursor: grabbing;
+}
+
+.reorderCardDisabled {
+  cursor: default;
+}
+
+.reorderCardPendingDelete {
+  border-color: var(--color-border-strong);
+}
+
+.reorderHandle {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: var(--color-background-overlay-soft);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+.reorderHandle span {
+  min-width: 16px;
+  text-align: center;
+}
+
+.reorderDeleteBadge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: calc(100% - 44px);
+  padding: 4px 6px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background: var(--color-background-overlay-soft);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+.reorderDeleteBadge span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main button.reorderActionButton {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border-strong);
+}
+
+.main button.reorderActionDelete {
+  background: var(--color-background-overlay-soft);
+}
+
+.main button.reorderActionRestore {
+  background: linear-gradient(180deg, var(--accent-1), var(--accent-1-strong));
+}
+
+.reorderImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.reorderImagePendingDelete {
+  opacity: 0.75;
+}
+
+.reorderVideoBadge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-overlay-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.reorderPendingInfo {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-background-overlay-soft);
+  backdrop-filter: blur(3px);
+  font-size: 0.7rem;
+  color: var(--color-text-primary);
+  pointer-events: none;
+}
+
+.pendingDeleteSection {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border-strong);
+  display: grid;
+  gap: 8px;
+}
+
+.pendingDeleteTitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.84rem;
+}
+
+@media (max-width: 1200px) {
+  .table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 700px) {
+  .main {
+    padding: 10px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wide {
+    grid-column: span 1;
+  }
+
+  .table {
+    min-width: 640px;
+  }
+
+  .reorderGrid {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  }
+}

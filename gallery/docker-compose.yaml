@@ -1,0 +1,114 @@
+networks:
+  gallery-net:
+    driver: bridge
+  common:
+    external: true
+    name: ${TRAEFIK_COMMON_NETWORK:-common}
+
+volumes:
+  pgdata:
+  rabbitmqdata:
+
+services:
+  postgres:
+    image: postgres:18.1
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${PG_DATABASE}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - APP_INIT_USERNAME=${APP_INIT_USERNAME}
+      - APP_INIT_EMAIL=${APP_INIT_EMAIL}
+      - APP_INIT_ROLE=${APP_INIT_ROLE}
+      - APP_INIT_TG_ID=${APP_INIT_TG_ID}
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      gallery-net:
+      common:
+        aliases:
+          - gallery-postgres
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    networks:
+      - gallery-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - gallery-net
+
+  photo-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    command: ["npm", "run", "worker"]
+    networks:
+      - gallery-net
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_COMMON_NETWORK:-common}"
+      - "traefik.http.routers.gallery.rule=Host(`${GALLERY_HOST}`)"
+      - "traefik.http.routers.gallery.entrypoints=websecure"
+      - "traefik.http.routers.gallery.tls.certresolver=le"
+      - "traefik.http.services.gallery.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.gallery-security.headers.stsSeconds=63072000"
+      - "traefik.http.middlewares.gallery-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.gallery-security.headers.stsPreload=true"
+      - "traefik.http.middlewares.gallery-security.headers.frameDeny=true"
+      - "traefik.http.middlewares.gallery-security.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.gallery-security.headers.referrerPolicy=strict-origin-when-cross-origin"
+      - "traefik.http.routers.gallery.middlewares=gallery-security@docker"
+    networks:
+      gallery-net:
+      common:
+        aliases:
+          - gallery-nginx

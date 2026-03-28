@@ -1,0 +1,91 @@
+networks:
+  common:
+    external: true
+    name: ${TRAEFIK_COMMON_NETWORK:-common}
+
+volumes:
+  vaultwarden-data:
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DOMAIN=${VAULTWARDEN_DOMAIN}
+      - ROCKET_PORT=80
+      - ENABLE_WEBSOCKET=true
+      - SIGNUPS_ALLOWED=${VAULTWARDEN_SIGNUPS_ALLOWED:-false}
+      - INVITATIONS_ALLOWED=${VAULTWARDEN_INVITATIONS_ALLOWED:-false}
+      - DISABLE_ADMIN_TOKEN=${VAULTWARDEN_DISABLE_ADMIN_TOKEN:-false}
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN:-}
+      - SMTP_HOST=${VAULTWARDEN_SMTP_HOST:-}
+      - SMTP_FROM=${VAULTWARDEN_SMTP_FROM:-}
+      - SMTP_FROM_NAME=${VAULTWARDEN_SMTP_FROM_NAME:-Vaultwarden}
+      - SMTP_PORT=${VAULTWARDEN_SMTP_PORT:-587}
+      - SMTP_SECURITY=${VAULTWARDEN_SMTP_SECURITY:-starttls}
+      - SMTP_USERNAME=${VAULTWARDEN_SMTP_USERNAME:-}
+      - SMTP_PASSWORD=${VAULTWARDEN_SMTP_PASSWORD:-}
+      - SMTP_TIMEOUT=${VAULTWARDEN_SMTP_TIMEOUT:-15}
+      - SMTP_AUTH_MECHANISM=${VAULTWARDEN_SMTP_AUTH_MECHANISM:-}
+      - IP_HEADER=X-Forwarded-For
+      - LOG_LEVEL=${VAULTWARDEN_LOG_LEVEL:-warn}
+      - PUSH_ENABLED=false
+    healthcheck:
+      disable: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - vaultwarden-data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_COMMON_NETWORK:-common}"
+      - "traefik.http.routers.vaultwarden.rule=Host(`${VAULTWARDEN_HOST}`)"
+      - "traefik.http.routers.vaultwarden.entrypoints=websecure"
+      - "traefik.http.routers.vaultwarden.tls.certresolver=le"
+      - "traefik.http.routers.vaultwarden-admin.rule=Host(`${VAULTWARDEN_HOST}`) && PathPrefix(`/admin`)"
+      - "traefik.http.routers.vaultwarden-admin.entrypoints=websecure"
+      - "traefik.http.routers.vaultwarden-admin.tls.certresolver=le"
+      - "traefik.http.routers.vaultwarden-admin.priority=100"
+      - "traefik.http.routers.vaultwarden-admin.service=vaultwarden"
+      - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.vaultwarden-security.headers.stsSeconds=63072000"
+      - "traefik.http.middlewares.vaultwarden-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.vaultwarden-security.headers.stsPreload=true"
+      - "traefik.http.middlewares.vaultwarden-security.headers.frameDeny=true"
+      - "traefik.http.middlewares.vaultwarden-security.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.vaultwarden-security.headers.referrerPolicy=no-referrer"
+      - "traefik.http.middlewares.vaultwarden-admin-allow.ipallowlist.sourcerange=${VAULTWARDEN_ADMIN_ALLOW_IPS:-127.0.0.1/32}"
+      - "traefik.http.routers.vaultwarden.middlewares=vaultwarden-security@docker"
+      - "traefik.http.routers.vaultwarden-admin.middlewares=vaultwarden-security@docker,vaultwarden-admin-allow@docker"
+    networks:
+      - common
+
+  backup:
+    build:
+      context: .
+      dockerfile: backup/Dockerfile
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-UTC}
+      - DB_PATH=/data/db.sqlite3
+      - BACKUP_DIR=/backups
+      - BACKUP_RETENTION_SHORT_DAYS=${VAULTWARDEN_BACKUP_RETENTION_SHORT_DAYS:-30}
+      - BACKUP_RETENTION_LONG_DAYS=${VAULTWARDEN_BACKUP_RETENTION_LONG_DAYS:-60}
+      - BACKUP_SIZE_THRESHOLD_MB=${VAULTWARDEN_BACKUP_SIZE_THRESHOLD_MB:-100}
+      - BACKUP_SCHEDULE=${VAULTWARDEN_BACKUP_SCHEDULE:-0 3 * * *}
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - vaultwarden-data:/data:ro
+      - ./backups:/backups

@@ -1,0 +1,43 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "start": "node server.js",
+        "worker": "node worker.js",
+        "lint": "eslint .",
+        "lint.fix": "eslint . --fix",
+        "format": "prettier . --check",
+        "format.fix": "prettier . --write"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.896.0",
+        "@aws-sdk/s3-request-presigner": "^3.896.0",
+        "connect-pg-simple": "10.0.0",
+        "cookie-parser": "1.4.7",
+        "cors": "2.8.5",
+        "csurf": "^1.2.2",
+        "dotenv": "17.2.0",
+        "amqplib": "^0.10.9",
+        "express": "5.1.0",
+        "express-session": "^1.19.0",
+        "express-useragent": "1.0.15",
+        "helmet": "8.1.0",
+        "multer": "^2.0.2",
+        "pg": "8.16.3",
+        "sharp": "^0.34.4"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.32.0",
+        "eslint": "^9.32.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "globals": "^16.3.0",
+        "prettier": "^3.6.2"
+    }
+}

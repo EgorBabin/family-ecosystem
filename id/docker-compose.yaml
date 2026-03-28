@@ -1,0 +1,47 @@
+networks:
+  id-net:
+    driver: bridge
+  common:
+    external: true
+    name: ${TRAEFIK_COMMON_NETWORK:-common}
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - id-net
+      - common
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_COMMON_NETWORK:-common}"
+      - "traefik.http.routers.id.rule=Host(`${ID_HOST}`)"
+      - "traefik.http.routers.id.entrypoints=websecure"
+      - "traefik.http.routers.id.tls.certresolver=le"
+      - "traefik.http.services.id.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.id-security.headers.stsSeconds=63072000"
+      - "traefik.http.middlewares.id-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.id-security.headers.stsPreload=true"
+      - "traefik.http.middlewares.id-security.headers.frameDeny=true"
+      - "traefik.http.middlewares.id-security.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.id-security.headers.referrerPolicy=strict-origin-when-cross-origin"
+      - "traefik.http.routers.id.middlewares=id-security@docker"
+    networks:
+      id-net:
+      common:
+        aliases:
+          - id-nginx
